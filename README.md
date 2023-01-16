@@ -32,6 +32,31 @@ Creamos un index.html
 ## d) Virtual Hosting:
 Queremos que nuestro servidor web ofrezca balanceo de carga desde https  a dos sitios web que tengan también https.
 
+Primero, configuramos en dos maquinas virtuales la ip estática (.171, .172) y cambiamos la página web por defecto.
+![](imagenes/servidor1index.PNG)
+![](imagenes/servidor2index.PNG)
+
+En una tercera máquina virtual (con ip .170) vamos a configurar el balanceador, que gestionará las peticiones y decidirá que servidor responde.
+
+En la máquina balanceador, hacemos una copia del fichero de configuración por defecto y creamos otro dentro de `/etc/nginx/conf.d/` llamado load-balancing.conf.
+![](imagenes/cambiarConfDefecto.PNG)
+![](imagenes/configuracionBalanceador.PNG)
+
+Comprobamos que la sintaxis es correcta mediante `nginx -t` y reiniciamos el servicio.
+
+Creamos una máquina cliente, y modificamos su `/etc/hosts` añadiendo la ip del balanceador de cargo y su dominio.
+ ![](imagenes/hostCliente.PNG)
+
+ Para finalizar, entramos al navegador y escribimos la dirección de enlace y vemos como el balanceador de carga se encarga de redistribuir las peticiones entre el servidor 1 y el 2.
+ ![](imagenes/comprobacionServidor1.PNG)
+![](imagenes/comprobacionServidor2.PNG)
+
+
+
+
+
+
+
 # 5.- Referencias.
 - [https://es.wikipedia.org/wiki/Nginx](https://es.wikipedia.org/wiki/Nginx)
 
