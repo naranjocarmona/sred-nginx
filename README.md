@@ -51,6 +51,35 @@ Creamos una máquina cliente, y modificamos su `/etc/hosts` añadiendo la ip del
  ![](imagenes/comprobacionServidor1.PNG)
 ![](imagenes/comprobacionServidor2.PNG)
 
+### Configurar https
+Para configurar https hacen falta dos cosas:
+1. Escuchar en el puerto 443.
+2. Crear un certificado e indicar la ruta en la configuración de nginx.
+
+El certificado se puede crear con el siguiente comando:
+
+```
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/antonio.key -out /etc/ssl/certs/antonio.crt
+```
+
+ ![](imagenes/crearCertificado.PNG)
+
+ Modificamos la configuración de nginx de la siguiente manera:
+
+ ![](imagenes/configuracionSSL.PNG)
+
+Repetimos la configuracion para servidor 1 y 2.
+
+Para que funcione, el servidor 1 y 2 necesitan el crtificado crt del balanceador de carga.
+Lo movemos con scp desde el balanceador de carga:
+```
+scp /etc/ssl/certs/antonio.crt root@192.168.0.171:/etc/ssl/certs/balanceador.crt
+scp /etc/ssl/certs/antonio.crt root@192.168.0.172:/etc/ssl/certs/balanceador.crt
+```
+
+
+
+
 
 
 
@@ -63,3 +92,7 @@ Creamos una máquina cliente, y modificamos su `/etc/hosts` añadiendo la ip del
 - [https://marketersgroup.es/diferencias-entre-apache-y-nginx/#:~:text=El%20servidor%20de%20Apache%20tiene,velocidad%20y%20mejora%20el%20rendimiento.](https://marketersgroup.es/diferencias-entre-apache-y-nginx/#:~:text=El%20servidor%20de%20Apache%20tiene,velocidad%20y%20mejora%20el%20rendimiento.)
 
 - [https://www.javatpoint.com/difference-between-apache-and-nginx](https://www.javatpoint.com/difference-between-apache-and-nginx)
+
+- [https://nginx.org/en/docs/http/configuring_https_servers.html](https://nginx.org/en/docs/http/configuring_https_servers.html)
+
+- [https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-on-centos-7](https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-on-centos-7)
