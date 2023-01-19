@@ -53,13 +53,13 @@ Creamos una máquina cliente, y modificamos su `/etc/hosts` añadiendo la ip del
 
 ### Configurar https
 Para configurar https hacen falta dos cosas:
-1. Escuchar en el puerto 443.
+1. Escuchar en el puerto 443 y usar ssl en la directiva listen.
 2. Crear un certificado e indicar la ruta en la configuración de nginx.
 
-El certificado se puede crear con el siguiente comando:
+Generamos el certificado del balanceador con el siguiente comando:
 
 ```
-sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/antonio.key -out /etc/ssl/certs/antonio.crt
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/antonioBalanceador.key -out /etc/ssl/certs/antonioBalanceador.crt
 ```
 
  ![](imagenes/crearCertificado.PNG)
@@ -68,14 +68,19 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/privat
 
  ![](imagenes/configuracionSSL.PNG)
 
-Repetimos la configuracion para servidor 1 y 2.
 
-Para que funcione, el servidor 1 y 2 necesitan el crtificado crt del balanceador de carga.
-Lo movemos con scp desde el balanceador de carga:
+Generamos el certificado de los servidores (los siguientes pasos hay que hacerlo tanto en el servidor 1 como en el 2):
 ```
-scp /etc/ssl/certs/antonio.crt root@192.168.0.171:/etc/ssl/certs/balanceador.crt
-scp /etc/ssl/certs/antonio.crt root@192.168.0.172:/etc/ssl/certs/balanceador.crt
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/antonioServidor.key -out /etc/ssl/certs/antonioServidor.crt
 ```
+
+Modificamos la configuración de nginx de la siguiente manera:
+ ![](imagenes/configuracionSSLservidor.PNG)
+
+Podemos comprobar en el navegador que el balanceador redirecciona y responde con https
+ ![](imagenes/balanceadorNavegador.PNG)
+
+
 
 
 
